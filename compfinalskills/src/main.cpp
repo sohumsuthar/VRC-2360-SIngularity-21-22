@@ -70,11 +70,11 @@ while(imu.isCalibrating()){ //wait for IMU to calibrate before runnin auton
 ArmB.spinFor(1.1, rotationUnits::rev, true);
 move(-2.2, 50);
 ArmB.spinFor(-1.35, rotationUnits::rev, true);
-gyroTurn(125, 10, 0);
+gyroTurn(125, 10);
 moveIn(60, 60);
-gyroTurn(-55, 10, 0);
+gyroTurn(-55, 10);
 moveIn(60, 60);
-gyroTurn(135, 10, 0);
+gyroTurn(135, 10);
 moveIn(80, 35);
 
 
