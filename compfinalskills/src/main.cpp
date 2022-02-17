@@ -67,6 +67,9 @@ move(7.5, 80);
 while(imu.isCalibrating()){ //wait for IMU to calibrate before runnin auton
   wait(100, msec);
 }
+const float gyro_Kp = 0.573;
+const float gyro_Ki = 0.4;
+const float gyro_Kd = 0.18;
 ArmB.spinFor(1.1, rotationUnits::rev, true);
 move(-2.2, 50);
 ArmB.spinFor(-1.35, rotationUnits::rev, true);

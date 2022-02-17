@@ -12,17 +12,22 @@
 #include <vex_competition.h>
 
 using namespace vex;
-double clip(double number, double min, double max){
-  if(number < min){
+void driveStop(){
+  MotorRB.stop(hold);
+  MotorLB.stop(hold);
+  MotorLF.stop(hold);
+  MotorRF.stop(hold);
+}
+double clip(double number, double min, double max) {
+  if (number < min) {
     number = min;
-  }
-  else if(number > max){
+  } else if (number > max) {
     number = max;
   }
   return number;
 }
-void moveIn(double inches, int poder){
-  double revs = inches/(4.000 * M_PI);
+void moveIn(double inches, int poder) {
+  double revs = inches / (4.000 * M_PI);
   MotorLB.setVelocity(poder, velocityUnits::pct);
   MotorLF.setVelocity(poder, velocityUnits::pct);
   MotorRB.setVelocity(poder, velocityUnits::pct);
@@ -54,14 +59,13 @@ void gyroTurn(double referenceHeading, int veloc) {
   MotorRB.setVelocity(veloc, velocityUnits::pct);
   MotorRF.setVelocity(veloc, velocityUnits::pct);
 
-  // Prints the referenceHeading for debugging puroses to ensure that it is going
-  // for the right degree amount
-
+  // Prints the referenceHeading for debugging puroses to ensure that it is
+  // going for the right degree amount
 
   // While loop to do the spin
   if (referenceHeading < 0) {
     while (imuHeading <= referenceHeading) {
-      MotorLF.spin(directionType::rev); 
+      MotorLF.spin(directionType::rev);
       MotorRF.spin(directionType::fwd);
       MotorLB.spin(directionType::rev);
       MotorRB.spin(directionType::fwd);
@@ -83,24 +87,14 @@ void gyroTurn(double referenceHeading, int veloc) {
   }
 
   // Stop motors after reached degree turn
-  MotorRB.stop(hold);
-  MotorLB.stop(hold);
-  MotorLF.stop(hold);
-  MotorRF.stop(hold);
+  driveStop();
   imu.setHeading(0, rotationUnits::deg);
 }
-void gyroTurnPID(double referenceHeading, int veloc, double kp, double ki, double kd) {
+void gyroTurnPID(double referenceHeading, double kp, double ki,double kd) {
   double lastError = 0;
   float integralSum = 0;
   timer period = timer();
-  period.reset();
 
-  // Set speeds of both Drive motors
-
-  // Prints the referenceHeading for debugging puroses to ensure that it is going
-  // for the right degree amount
-
-  // While loop to do the spin
   if (referenceHeading < 0) {
     while (imu.angle(rotationUnits::deg) <= referenceHeading) {
       period.reset();
@@ -120,6 +114,7 @@ void gyroTurnPID(double referenceHeading, int veloc, double kp, double ki, doubl
       MotorRF.spin(directionType::fwd);
       MotorLB.spin(directionType::rev);
       MotorRB.spin(directionType::fwd);
+
       lastError = error;
       Controller1.Screen.clearScreen();
       Controller1.Screen.print(imu.angle(rotationUnits::deg));
@@ -145,18 +140,75 @@ void gyroTurnPID(double referenceHeading, int veloc, double kp, double ki, doubl
       MotorRF.spin(directionType::rev);
       MotorLB.spin(directionType::fwd);
       MotorRB.spin(directionType::rev);
+
       lastError = error;
       Controller1.Screen.clearScreen();
       Controller1.Screen.print(imu.angle(rotationUnits::deg));
       this_thread::sleep_for(10);
     }
   }
+  driveStop();
+}
 
-  // Stop motors after reached degree turn
-  MotorRB.stop(hold);
-  MotorLB.stop(hold);
-  MotorLF.stop(hold);
-  MotorRF.stop(hold);
-  imu.setHeading(0, rotationUnits::deg);
+void TurnonPID(double gyroRequestedValue, double MaxspeedinRPM) {
+  float gyroSensorCurrentValue;
+  float gyroError;
+  float gyroDrive;
+  float lastgyroError;
+  float gyroP;
+  float gyroD;
+
+  const float gyro_Kp = 0.573;
+  const float gyro_Ki = 0.4;
+  const float gyro_Kd = 0.18;
+
+  int TimeExit = 0;
+  double Threshold = 1.5;
+  while (1) {
+    gyroSensorCurrentValue = imu.rotation(vex::rotationUnits::deg);
+    Brain.Screen.setCursor(3, 1);
+
+    gyroError = gyroRequestedValue - gyroSensorCurrentValue;
+
+    if (gyroError < Threshold and gyroError > -Threshold) {
+      break;
+    } else if (TimeExit == 10000) {
+      Brain.Screen.clearScreen();
+      driveStop();
+      break;
+    } else {
+      TimeExit = 0;
+    }
+
+    gyroP = (gyro_Kp * gyroError);
+    static float gyroI = 0;
+    gyroI += gyroError * gyro_Ki;
+    if (gyroI > 1) {
+      gyroI = 1;
+    }
+    if (gyroI < -1) {
+      gyroI = -1;
+    }
+    gyroD = (gyroError - lastgyroError) * gyro_Kd;
+    gyroDrive = gyroP + gyroI + gyroD;
+
+    if (gyroDrive > MaxspeedinRPM) {
+      gyroDrive = MaxspeedinRPM;
+    }
+    if (gyroDrive < -MaxspeedinRPM) {
+      gyroDrive = -MaxspeedinRPM;
+    }
+
+    // Move Motors with PID
+    int powerValue = gyroDrive;
+    MotorRF.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm);
+    MotorLF.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
+    MotorRB.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm);
+    MotorLB.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
+
+    lastgyroError = gyroError;
+    wait(50, vex::timeUnits::msec);
+  }
+  driveStop();
 }
 #endif
