@@ -213,19 +213,19 @@ void TurnonPID(double gyroRequestedValue, double MaxspeedinRPM) {
 }
 double angleCalc(double requestedAngle){
   double revs;
-  revs = 
+  revs = (((sqrt(574.65) * M_PI) / 360) * requestedAngle) / 4 * M_PI;
   return revs;
 }
-void turnNoIMU(double referenceHeading, double power, double kp, double, ki, double, kd){
+void turnNoIMU(double referenceHeading, double power, double kp, double ki, double kd){
   double lastError = 0;
   float integralSum = 0;
   timer period = timer();
-
+  MotorLF.resetRotation();
   if (referenceHeading < 0) {
-    while (angleCalc) <= referenceHeading) {
+    while ((double)MotorLB.rotation(rotationUnits::rev) <= (double)angleCalc(referenceHeading)) {
       period.reset();
       double error;
-      double imuHeading = imu.angle(rotationUnits::deg);
+      double imuHeading = MotorLB.rotation(rotationUnits::rev);
       error = referenceHeading - imuHeading;
       double derivative = (error - lastError) / (double)period.value();
       integralSum = integralSum + (error * (double)period.value());
@@ -246,9 +246,9 @@ void turnNoIMU(double referenceHeading, double power, double kp, double, ki, dou
       Controller1.Screen.print(imu.angle(rotationUnits::deg));
       this_thread::sleep_for(10);
     }
-
-  } else {
-    while (imu.angle(rotationUnits::deg) <= referenceHeading) {
+  }
+   else {
+    while ((double)MotorLB.rotation(rotationUnits::rev) >= (double)angleCalc(referenceHeading)){
       period.reset();
       double error;
       double imuHeading = imu.angle(rotationUnits::deg);
@@ -275,6 +275,6 @@ void turnNoIMU(double referenceHeading, double power, double kp, double, ki, dou
   }
   driveStop();
 }
-}
+
 
 #endif
