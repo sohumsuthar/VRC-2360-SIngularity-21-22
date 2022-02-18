@@ -211,4 +211,70 @@ void TurnonPID(double gyroRequestedValue, double MaxspeedinRPM) {
   }
   driveStop();
 }
+double angleCalc(double requestedAngle){
+  double revs;
+  revs = 
+  return revs;
+}
+void turnNoIMU(double referenceHeading, double power, double kp, double, ki, double, kd){
+  double lastError = 0;
+  float integralSum = 0;
+  timer period = timer();
+
+  if (referenceHeading < 0) {
+    while (angleCalc) <= referenceHeading) {
+      period.reset();
+      double error;
+      double imuHeading = imu.angle(rotationUnits::deg);
+      error = referenceHeading - imuHeading;
+      double derivative = (error - lastError) / (double)period.value();
+      integralSum = integralSum + (error * (double)period.value());
+      double output = clip((kp * error) + (ki * integralSum) + (kd * derivative), -1, 1);
+
+      MotorLF.setVelocity(100 * output, velocityUnits::pct);
+      MotorLB.setVelocity(100 * output, velocityUnits::pct);
+      MotorRB.setVelocity(100 * output, velocityUnits::pct);
+      MotorRF.setVelocity(100 * output, velocityUnits::pct);
+
+      MotorLF.spin(directionType::rev);
+      MotorRF.spin(directionType::fwd);
+      MotorLB.spin(directionType::rev);
+      MotorRB.spin(directionType::fwd);
+
+      lastError = error;
+      Controller1.Screen.clearScreen();
+      Controller1.Screen.print(imu.angle(rotationUnits::deg));
+      this_thread::sleep_for(10);
+    }
+
+  } else {
+    while (imu.angle(rotationUnits::deg) <= referenceHeading) {
+      period.reset();
+      double error;
+      double imuHeading = imu.angle(rotationUnits::deg);
+      error = referenceHeading - imuHeading;
+      double derivative = (error - lastError) / (double)period.value();
+      integralSum = integralSum + (error * (double)period.value());
+      double output = clip((kp * error) + (ki * integralSum) + (kd * derivative), -1, 1);
+
+      MotorLF.setVelocity(100 * output, velocityUnits::pct);
+      MotorLB.setVelocity(100 * output, velocityUnits::pct);
+      MotorRB.setVelocity(100 * output, velocityUnits::pct);
+      MotorRF.setVelocity(100 * output, velocityUnits::pct);
+
+      MotorLF.spin(directionType::fwd);
+      MotorRF.spin(directionType::rev);
+      MotorLB.spin(directionType::fwd);
+      MotorRB.spin(directionType::rev);
+
+      lastError = error;
+      Controller1.Screen.clearScreen();
+      Controller1.Screen.print(imu.angle(rotationUnits::deg));
+      this_thread::sleep_for(10);
+    }
+  }
+  driveStop();
+}
+}
+
 #endif
