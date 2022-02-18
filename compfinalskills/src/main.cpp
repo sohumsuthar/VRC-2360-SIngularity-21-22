@@ -64,12 +64,15 @@ move(7.5, 80);
 
 //0.15 50hold 
 */
+// */
 while(imu.isCalibrating()){ //wait for IMU to calibrate before runnin auton
   wait(100, msec);
 }
-const float gyro_Kp = 0.573;
-const float gyro_Ki = 0.4;
-const float gyro_Kd = 0.18;
+const float Kp = 0.573;
+const float Ki = 0.4;
+const float Kd = 0.18;
+gyroTurnPID(90, Kp, Ki, Kd);
+/*
 ArmB.spinFor(1.1, rotationUnits::rev, true);
 move(-2.2, 50);
 ArmB.spinFor(-1.35, rotationUnits::rev, true);
@@ -79,7 +82,9 @@ gyroTurn(-55, 10);
 moveIn(60, 60);
 gyroTurn(135, 10);
 moveIn(80, 35);
+*/
 
+moveInches(100, 40);
 
 
 }

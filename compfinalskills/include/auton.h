@@ -276,5 +276,26 @@ void turnNoIMU(double referenceHeading, double power, double kp, double ki, doub
   driveStop();
 }
 
+void turnAngle(double angle, double poder){
+  if (angle > 0){
+    MotorLF.rotateTo((double)angleCalc(angle), rotationUnits::rev, poder, velocityUnits::pct, false);
+    MotorRF.rotateTo((double)angleCalc(angle) , rotationUnits::rev, -poder, velocityUnits::pct, false);
+    MotorLB.rotateTo((double)angleCalc(angle), rotationUnits::rev, poder, velocityUnits::pct, false);
+    MotorRB.rotateTo((double)angleCalc(angle) , rotationUnits::rev, -poder, velocityUnits::pct, true);
+  }
+  else if(angle < 0){
+    MotorLF.rotateTo((double)angleCalc(angle), rotationUnits::rev, -poder, velocityUnits::pct, false);
+    MotorRF.rotateTo((double)angleCalc(angle) , rotationUnits::rev, poder, velocityUnits::pct, false);
+    MotorLB.rotateTo((double)angleCalc(angle), rotationUnits::rev, -poder, velocityUnits::pct, false);
+    MotorRB.rotateTo((double)angleCalc(angle) , rotationUnits::rev, poder, velocityUnits::pct, true);
+  }
+  driveStop();
+}
 
+void moveInches(double inches, double poder){
+  MotorLF.rotateTo((inches / (4 * M_PI)) , rotationUnits::rev, poder, velocityUnits::pct, false);
+  MotorRF.rotateTo((inches / (4 * M_PI)) , rotationUnits::rev, poder, velocityUnits::pct, false);
+  MotorLB.rotateTo((inches / (4 * M_PI)), rotationUnits::rev, poder, velocityUnits::pct, false);
+  MotorRB.rotateTo((inches / (4 * M_PI)) , rotationUnits::rev, poder, velocityUnits::pct, true);
+}
 #endif
