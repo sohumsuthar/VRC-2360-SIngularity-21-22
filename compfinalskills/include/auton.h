@@ -26,6 +26,19 @@ double clip(double number, double min, double max) {
   }
   return number;
 }
+void balance(double power){
+  while(imu.pitch(rotationUnits::deg) > 5 || imu.pitch(rotationUnits::deg) < -5){
+    MotorLB.setVelocity(power, velocityUnits::pct);
+    MotorLF.setVelocity(power, velocityUnits::pct);
+    MotorRB.setVelocity(power, velocityUnits::pct);
+    MotorRF.setVelocity(power, velocityUnits::pct);
+    MotorLF.spin(directionType::fwd);
+    MotorRF.spin(directionType::fwd);
+    MotorLB.spin(directionType::fwd);
+    MotorRB.spin(directionType::fwd);
+  }
+  driveStop();
+}
 void moveIn(double inches, int poder) {
   double revs = inches / (4.000 * M_PI);
   MotorLB.setVelocity(poder, velocityUnits::pct);
