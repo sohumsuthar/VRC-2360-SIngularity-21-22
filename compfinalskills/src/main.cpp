@@ -79,16 +79,23 @@ move(-1.8, 30);
 ArmB.spinFor(-1, rotationUnits::rev, true);
 vexDelay(500);
 TurnonPID(90, 100); 
-move(2.25, 30);
+move(1.8, 30);
 TurnonPID(180, 100);
-move(4.77, 30);
+move(3.825, 30);
 TurnonPID(90, 100);
-move(3.5, 30);
+move(2.7, 30);
 TurnonPID(0, 100);
-move(7, 30);
+move(1.8, 30);
 TurnonPID(90, 100);
-move(2.25, 30);
+move(5.4, 30);
 TurnonPID(180, 100);
+move(2, 30);
+Claw.spinFor(1, rotationUnits::rev, false);
+TurnonPID(0, 100);
+move(3.5, 60);
+Claw.spinFor(-1, rotationUnits::rev, false);
+move(-3.5, 70);
+
 
 
 /*

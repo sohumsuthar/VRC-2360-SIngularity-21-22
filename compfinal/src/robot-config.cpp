@@ -17,7 +17,7 @@ motor ArmL = motor(PORT1, ratio36_1, false);
 motor ArmR = motor(PORT2, ratio36_1, true);
 motor ArmB = motor(PORT14, ratio36_1);
 inertial imu = inertial(PORT13);
-motor Claw = motor(PORT9, ratio18_1, true);
+motor Claw = motor(PORT10, ratio18_1, true);
 motor_group arm = motor_group(ArmL, ArmR);
 
 // VEXcode generated functions
