@@ -220,8 +220,9 @@ void TurnonPID(double gyroRequestedValue, double MaxspeedinRPM) {
     MotorLB.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
 
     lastgyroError = gyroError;
-    wait(50, vex::timeUnits::msec);
+    wait(10, vex::timeUnits::msec);
   }
+  
   driveStop();
 }
 double angleCalc(double requestedAngle){
