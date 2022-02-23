@@ -101,7 +101,7 @@ void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) {
 
 void driveOnPID(double distance, double MaxspeedinRPM) { 
   MotorRB.resetRotation();
-  float degs = distance / (4 * M_PI) * 360;
+  float degs = (distance / (4 * M_PI)) * 360;
   float encoderValue;
   float error;
   float Drive;
@@ -109,7 +109,7 @@ void driveOnPID(double distance, double MaxspeedinRPM) {
   float P;
   float D;
 
-  const float Kp = 0.573;
+  const float Kp = 0.35;
   const float Ki = 0.4;
   const float Kd = 0.18;
 
