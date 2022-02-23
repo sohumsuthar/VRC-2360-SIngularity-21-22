@@ -2726,9 +2726,9 @@ Linker script and memory map
  .text._Z4movedd
                 0x0000000003800290       0xe8 build/src/main.o
                 0x0000000003800290                move(double, double)
- .text._Z9TurnonPIDdd
+ .text._Z9turnOnPIDdd
                 0x0000000003800378      0x220 build/src/main.o
-                0x0000000003800378                TurnonPID(double, double)
+                0x0000000003800378                turnOnPID(double, double)
  .text._Z10autonomousv
                 0x0000000003800598      0x2d8 build/src/main.o
                 0x0000000003800598                autonomous()
@@ -3576,7 +3576,7 @@ Linker script and memory map
  .ARM.exidx.text._Z4movedd
                 0x0000000003804114        0x0 build/src/main.o
                                           0x8 (size before relaxing)
- .ARM.exidx.text._Z9TurnonPIDdd
+ .ARM.exidx.text._Z9turnOnPIDdd
                 0x0000000003804114        0x0 build/src/main.o
                                           0x8 (size before relaxing)
  .ARM.exidx.text._Z10autonomousv
@@ -3713,7 +3713,7 @@ Linker script and memory map
                 0x0000000003804128                __bss_start = .
  *(.bss)
  *(.bss.*)
- .bss._ZZ9TurnonPIDddE5gyroI
+ .bss._ZZ9turnOnPIDddE5gyroI
                 0x0000000003804128        0x4 build/src/main.o
  .bss.Competition
                 0x000000000380412c       0x28 build/src/main.o

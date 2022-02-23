@@ -163,7 +163,7 @@ void gyroTurnPID(double referenceHeading, double kp, double ki,double kd) {
   driveStop();
 }
 
-void TurnonPID(double gyroRequestedValue, double MaxspeedinRPM) {
+void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) {
   float gyroSensorCurrentValue;
   float gyroError;
   float gyroDrive;

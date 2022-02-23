@@ -78,7 +78,7 @@ ArmB.spinFor(1, rotationUnits::rev, true);
 move(-1.7, 30);
 ArmB.spinFor(-1, rotationUnits::rev, true);
 
-TurnonPID(90, 100);
+turnOnPID(90, 100);
 /*
 MotorRF.spinTo(0.1, rotationUnits::rev, false);
 MotorRB.spinTo(0.1, rotationUnits::rev, false);
@@ -88,7 +88,7 @@ MotorLB.spinTo(-0.1, rotationUnits::rev, true);
 vexDelay(100);
 move(2.1, 30);
 
-TurnonPID(180, 100);
+turnOnPID(180, 100);
 /*
 MotorRF.spinTo(0.1, rotationUnits::rev, false);
 MotorRB.spinTo(0.1, rotationUnits::rev, false);
@@ -98,7 +98,7 @@ MotorLB.spinTo(-0.1, rotationUnits::rev, true);
 vexDelay(100);
 move(3.25, 30);
 
-TurnonPID(90, 100);
+turnOnPID(90, 100);
 /*
 MotorRF.spinTo(-0.1, rotationUnits::rev, false);
 MotorRB.spinTo(-0.1, rotationUnits::rev, false);
@@ -107,7 +107,7 @@ MotorLB.spinTo(0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
 move(3.25, 30);
-TurnonPID(0, 100);
+turnOnPID(0, 100);
 /*
 MotorRF.spinTo(-0.1, rotationUnits::rev, false);
 MotorRB.spinTo(-0.1, rotationUnits::rev, false);
@@ -116,7 +116,7 @@ MotorLB.spinTo(0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
 move(1.7, 30);
-TurnonPID(90, 100);
+turnOnPID(90, 100);
 /*
 MotorRF.spinTo(0.1, rotationUnits::rev, false);
 MotorRB.spinTo(0.1, rotationUnits::rev, false);
@@ -125,7 +125,7 @@ MotorLB.spinTo(-0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
 move(3, 30);
-TurnonPID(180, 100);
+turnOnPID(180, 100);
 /*
 MotorRF.spinTo(0.1, rotationUnits::rev, false);
 MotorRB.spinTo(0.1, rotationUnits::rev, false);
@@ -134,7 +134,7 @@ MotorLB.spinTo(-0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
 move(4.5, 30);
-TurnonPID(90, 100);
+turnOnPID(90, 100);
 /*
 MotorRF.spinTo(-0.1, rotationUnits::rev, false);
 MotorRB.spinTo(-0.1, rotationUnits::rev, false);
@@ -144,7 +144,7 @@ MotorLB.spinTo(0.1, rotationUnits::rev, true);
 vexDelay(100);
 move(2.5, 30);
 Claw.spinFor(0.75, rotationUnits::rev, false);
-TurnonPID(0, 100);
+turnOnPID(0, 100);
 /*
 MotorRF.spinTo(-0.1, rotationUnits::rev, false);
 MotorRB.spinTo(-0.1, rotationUnits::rev, false);
