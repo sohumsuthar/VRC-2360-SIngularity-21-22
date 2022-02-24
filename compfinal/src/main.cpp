@@ -10,6 +10,8 @@
 #include "vex.h"
 #include <vex_competition.h>
 #include <driver.h>
+#include <junk.h>
+#include <auton.h>
 
 using namespace vex;
 competition Competition;
@@ -18,18 +20,6 @@ void pre_auton(void) { //preauton for folding mechanisms (not in use)
   vexcodeInit();
 }
 
-void move(double revs, double power){
-  MotorLB.setVelocity(power, velocityUnits::pct);
-  MotorLF.setVelocity(power, velocityUnits::pct);
-  MotorRB.setVelocity(power, velocityUnits::pct);
-  MotorRF.setVelocity(power, velocityUnits::pct);
-
-  MotorLB.spinFor(revs, rotationUnits::rev, false);
-  MotorLF.spinFor(revs, rotationUnits::rev, false);
-  MotorRB.spinFor(revs, rotationUnits::rev, false);
-  MotorRF.spinFor(revs, rotationUnits::rev, true);
-
-}
 void autonomous(void) { //auton
 /*MotorLB.spin(directionType::fwd, 20, velocityUnits::pct);
 MotorRB.spin(directionType::fwd, 20, velocityUnits::pct);
@@ -40,19 +30,19 @@ MotorLB.stop(hold);
 MotorRB.stop(hold);
 MotorRF.stop(hold);
 MotorLF.stop(hold); */
-move(3.9, 80);
-move(0.35, 20);
-Claw.spinFor(-1.5, rotationUnits::rev, false);
-vexDelay(1800);
-Claw.stop();
-move(-3, 50);
+driveOnPID(55, 200);
+//move(3.9, 80);
+//move(0.35, 20);
+Claw.spinFor(-360, rotationUnits::deg, true);
+//move(-3, 50);
+driveOnPID(-40, 200);
 //0.15 50hold
 
 }
 
 void usercontrol(void) {
-  Controller1.ButtonUp.pressed(nitroboost); //assigning all switchable modes
-  Controller1.ButtonDown.pressed(snailmode);
+  Controller1.ButtonL1.pressed(nitroboost); //assigning all switchable modes
+  Controller1.ButtonL2.pressed(snailmode);
   //Controller1.ButtonLeft.pressed(toggleonoff);
   timer Timer = timer(); //start timer for reminding the driver of time
   Timer.reset();
@@ -76,14 +66,14 @@ void usercontrol(void) {
     } else if (Controller1.ButtonR2.pressing()) {
       ArmL.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
       ArmR.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonL2.pressing()) {
+    } else if (Controller1.ButtonY.pressing()) {
       Claw.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonL1.pressing()) {
-      Claw.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonX.pressing()) {
-      ArmB.spin(directionType::rev, 100 * maxSpeedPct * accel, velocityUnits::pct);
-      //accel -= 0.1;
     } else if (Controller1.ButtonB.pressing()) {
+      Claw.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
+    } else if (Controller1.ButtonDown.pressing()) {
+      ArmB.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
+      //accel -= 0.1;
+    } else if (Controller1.ButtonRight.pressing()) {
       ArmB.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
     } else {
       ArmL.stop(hold);
