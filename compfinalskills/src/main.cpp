@@ -189,8 +189,8 @@ moveInches(100, 40);
 }
 
 void usercontrol(void) {
- Controller1.ButtonUp.pressed(nitroboost); //assigning all switchable modes
-  Controller1.ButtonDown.pressed(snailmode);
+  Controller1.ButtonL1.pressed(nitroboost); //assigning all switchable modes
+  Controller1.ButtonL2.pressed(snailmode);
   //Controller1.ButtonLeft.pressed(toggleonoff);
   timer Timer = timer(); //start timer for reminding the driver of time
   Timer.reset();
@@ -214,14 +214,14 @@ void usercontrol(void) {
     } else if (Controller1.ButtonR2.pressing()) {
       ArmL.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
       ArmR.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonL2.pressing()) {
+    } else if (Controller1.ButtonY.pressing()) {
       Claw.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonL1.pressing()) {
-      Claw.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonX.pressing()) {
-      ArmB.spin(directionType::rev, 100 * maxSpeedPct * accel, velocityUnits::pct);
-      //accel -= 0.1;
     } else if (Controller1.ButtonB.pressing()) {
+      Claw.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
+    } else if (Controller1.ButtonDown.pressing()) {
+      ArmB.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
+      //accel -= 0.1;
+    } else if (Controller1.ButtonRight.pressing()) {
       ArmB.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
     } else {
       ArmL.stop(hold);
