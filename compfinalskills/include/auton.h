@@ -25,8 +25,22 @@ void driveStop(bool holding){
     MotorLF.stop();
     MotorRF.stop();
   }
-
 }
+
+void setDriveVelocity(float velocity) {
+  MotorLF.setVelocity(velocity, velocityUnits::pct);
+  MotorLB.setVelocity(velocity, velocityUnits::pct);
+  MotorRB.setVelocity(velocity, velocityUnits::pct);
+  MotorRF.setVelocity(velocity, velocityUnits::pct);
+}
+void driveCorrection(float velocity, int dir){
+  setDriveVelocity(velocity);
+  MotorRF.spinTo(-0.1, rotationUnits::rev, false);
+  MotorRB.spinTo(-0.1, rotationUnits::rev, false);
+  MotorLF.spinTo(0.1, rotationUnits::rev, false);
+  MotorLB.spinTo(0.1, rotationUnits::rev, true);
+}
+
 double clip(double number, double min, double max) {
   if (number < min) {
     number = min;
@@ -38,6 +52,7 @@ double clip(double number, double min, double max) {
 
 void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) { //no params for PID consts
   float gyroSensorCurrentValue; //current sensor value for IMU
+  float dir;
   float gyroError; //error
   float gyroDrive; //output var
   float lastgyroError; //las error
@@ -82,6 +97,18 @@ void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) { //no params fo
       gyroDrive = -MaxspeedinRPM;
     }
     int powerValue = gyroDrive;
+    bool breakSwitch = true;
+
+    if(breakSwitch){
+      if(powerValue > 0){
+        dir = 1;
+      }
+      else if(powerValue < 0){
+        dir = -1;
+      }
+      breakSwitch = false;
+    }
+
     MotorRF.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm); //spin motors to output var
     MotorLF.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm); //always equal to or lower than max speed specified
     MotorRB.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm);
@@ -89,7 +116,9 @@ void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) { //no params fo
     lastgyroError = gyroError; //set the last error for loop iteration
     wait(10, vex::timeUnits::msec); //wait for no wasted resources
   }
-  driveStop(true); //stop the drive
+  driveStop(false); //stop the drive
+  driveCorrection(20, dir);\
+  driveStop(true);
 }
 
 void driveOnPID(double distance, double MaxspeedinRPM) { 

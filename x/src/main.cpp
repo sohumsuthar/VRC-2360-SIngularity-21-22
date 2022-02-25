@@ -100,11 +100,11 @@ void usercontrol(void) {
                 vex::velocityUnits::pct);
 
     if (Controller1.ButtonR1.pressing()) {
-      lift1.spin(vex::directionType::fwd, 100 * maxSpeedPct, vex::velocityUnits::pct);
-      lift2.spin(vex::directionType::rev, 100 * maxSpeedPct, vex::velocityUnits::pct);
+      lift1.spin(vex::directionType::fwd, 100 * 0.75, vex::velocityUnits::pct);
+      lift2.spin(vex::directionType::rev, 100 * 0.75, vex::velocityUnits::pct);
     } else if (Controller1.ButtonR2.pressing()) {
-      lift1.spin(vex::directionType::rev, 100 * maxSpeedPct, vex::velocityUnits::pct);
-      lift2.spin(vex::directionType::fwd, 100 * maxSpeedPct, vex::velocityUnits::pct);
+      lift1.spin(vex::directionType::rev, 100 * 0.75, vex::velocityUnits::pct);
+      lift2.spin(vex::directionType::fwd, 100 * 0.75, vex::velocityUnits::pct);
     } else {
       lift1.stop(hold);
       lift2.stop(hold);

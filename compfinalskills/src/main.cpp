@@ -64,8 +64,11 @@ MotorLF.stop(hold);
 move(7.5, 80);
 
 //0.15 50hold 
+driveOnPID(120, 200);
+vexDelay(10000); //for testing auton
 */
-// */
+
+
 while(imu.isCalibrating()){ //wait for IMU to calibrate before runnin auton
   vexDelay(100);
 }
@@ -75,8 +78,6 @@ while(imu.isCalibrating()){ //wait for IMU to calibrate before runnin auton
 const float Kp = 0.12;
 const float Ki = 0.4;
 const float Kd = 0.28;
-driveOnPID(120, 200);
-vexDelay(10000); //for testing auton
 //moveInches(12, 30);
 //balance(7.5);
 ArmB.spinFor(1, rotationUnits::rev, true);
