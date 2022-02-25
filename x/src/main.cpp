@@ -63,29 +63,61 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+float maxSpeedPct = 0.8;
+bool toggle = false;
+void nitroboost() { // Switchable mode
+  Controller1.Screen.clearScreen();
+  Controller1.Screen.setCursor(0, 0);
+  if (maxSpeedPct == 1) {
+    maxSpeedPct = 0.8;
+    Controller1.rumble("..");
+    Controller1.Screen.print("NORMAL SPEED");
+  } else {
+    maxSpeedPct = 1;
+    Controller1.rumble("...");
+    Controller1.Screen.print("MAX SPEED");
+  }
+}
+
+void snailmode() {
+  Controller1.Screen.clearScreen();
+  Controller1.Screen.setCursor(0, 0);
+  if (maxSpeedPct == 0.5) {
+    maxSpeedPct = 0.8;
+    Controller1.rumble("..");
+    Controller1.Screen.print("NORMAL");
+  } else {
+    maxSpeedPct = 0.5;
+    Controller1.rumble(".");
+    Controller1.Screen.print("SLOW");
+  }
+}
+
 void usercontrol(void) {
+  Controller1.ButtonB.pressed(nitroboost); //assigning all switchable modes
+  Controller1.ButtonLeft.pressed(snailmode);
   // User control code here, inside the loop
   while (1) {
 
-    left1.spin(vex::directionType::fwd, Controller1.Axis3.position(),
+    left1.spin(vex::directionType::fwd, Controller1.Axis3.position() * maxSpeedPct,
                vex::velocityUnits::pct);
-    left2.spin(vex::directionType::rev, Controller1.Axis3.position(),
+    left2.spin(vex::directionType::rev, Controller1.Axis3.position() * maxSpeedPct,
                vex::velocityUnits::pct);
-    left3.spin(vex::directionType::fwd, Controller1.Axis3.position(),
+    left3.spin(vex::directionType::fwd, Controller1.Axis3.position() * maxSpeedPct,
                vex::velocityUnits::pct);
-    right1.spin(vex::directionType::rev, Controller1.Axis2.position(),
+    right1.spin(vex::directionType::rev, Controller1.Axis2.position() * maxSpeedPct,
                 vex::velocityUnits::pct);
-    right2.spin(vex::directionType::fwd, Controller1.Axis2.position(),
+    right2.spin(vex::directionType::fwd, Controller1.Axis2.position() * maxSpeedPct,
                 vex::velocityUnits::pct);
-    right3.spin(vex::directionType::rev, Controller1.Axis2.position(),
+    right3.spin(vex::directionType::rev, Controller1.Axis2.position() * maxSpeedPct,
                 vex::velocityUnits::pct);
 
     if (Controller1.ButtonR1.pressing()) {
-      lift1.spin(vex::directionType::fwd, 75, vex::velocityUnits::pct);
-      lift2.spin(vex::directionType::rev, 75, vex::velocityUnits::pct);
+      lift1.spin(vex::directionType::fwd, 100 * maxSpeedPct, vex::velocityUnits::pct);
+      lift2.spin(vex::directionType::rev, 100 * maxSpeedPct, vex::velocityUnits::pct);
     } else if (Controller1.ButtonR2.pressing()) {
-      lift1.spin(vex::directionType::rev, 75, vex::velocityUnits::pct);
-      lift2.spin(vex::directionType::fwd, 75, vex::velocityUnits::pct);
+      lift1.spin(vex::directionType::rev, 100 * maxSpeedPct, vex::velocityUnits::pct);
+      lift2.spin(vex::directionType::fwd, 100 * maxSpeedPct, vex::velocityUnits::pct);
     } else {
       lift1.stop(hold);
       lift2.stop(hold);
@@ -99,18 +131,8 @@ void usercontrol(void) {
       mob.set(false);
     } else if (Controller1.ButtonY.pressing()) {
       mob.set(true);
-    }
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
-
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
-
-    wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
+      }
+    wait(20, msec); // Sleep the task for a short amount of time to  
   }
 }
 
