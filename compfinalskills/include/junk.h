@@ -14,35 +14,35 @@
 
 using namespace vex;
 
-void gyroTurnPID(double referenceHeading, double kp, double ki,double kd) {
-  double lastError = 0;
-  float integralSum = 0;
-  timer period = timer();
+void gyroTurnPID(double referenceHeading, double kp, double ki,double kd) { //freedom for changing constants for different purposes
+  double lastError = 0; //define previous error value in loop
+  float integralSum = 0; //define sum of error over time
+  timer period = timer(); //start timer for D and I
 
-  if (referenceHeading < 0) {
-    while (imu.angle(rotationUnits::deg) <= referenceHeading) {
-      period.reset();
-      double error;
-      double imuHeading = imu.angle(rotationUnits::deg);
-      error = referenceHeading - imuHeading;
-      double derivative = (error - lastError) / (double)period.value();
-      integralSum = integralSum + (error * (double)period.value());
-      double output = clip((kp * error) + (ki * integralSum) + (kd * derivative), -1, 1);
+  if (referenceHeading < 0) { //if the requested value is a counter-clockwise turn
+    while (imu.angle(rotationUnits::deg) <= referenceHeading) { //PID loop starts here
+      period.reset(); //reset time
+      double error; //define current error
+      double imuHeading = imu.angle(rotationUnits::deg); //set variable as sensor output
+      error = referenceHeading - imuHeading; //calculate error at iteration
+      double derivative = (error - lastError) / (double)period.value(); //find the D value given time and error
+      integralSum = integralSum + (error * (double)period.value()); //start the summation of the error and time
+      double output = clip((kp * error) + (ki * integralSum) + (kd * derivative), -1 , 1); //calculate output for motor speed
 
-      MotorLF.setVelocity(100 * output, velocityUnits::pct);
+      MotorLF.setVelocity(100 * output, velocityUnits::pct); //set the velocity output for the motors 
       MotorLB.setVelocity(100 * output, velocityUnits::pct);
       MotorRB.setVelocity(100 * output, velocityUnits::pct);
       MotorRF.setVelocity(100 * output, velocityUnits::pct);
 
-      MotorLF.spin(directionType::rev);
+      MotorLF.spin(directionType::rev); //spin to move CC
       MotorRF.spin(directionType::fwd);
       MotorLB.spin(directionType::rev);
       MotorRB.spin(directionType::fwd);
 
-      lastError = error;
+      lastError = error; //set the error to lastError
       Controller1.Screen.clearScreen();
-      Controller1.Screen.print(imu.angle(rotationUnits::deg));
-      this_thread::sleep_for(10);
+      Controller1.Screen.print(imu.angle(rotationUnits::deg)); //print out IMU value for troubleshooting
+      this_thread::sleep_for(10); //sleep so resources are not wasted
     }
 
   } else {

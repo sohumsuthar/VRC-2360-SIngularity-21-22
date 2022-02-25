@@ -76,7 +76,7 @@ const float Kp = 0.12;
 const float Ki = 0.4;
 const float Kd = 0.28;
 driveOnPID(120, 200);
-vexDelay(10000);
+vexDelay(10000); //for testing auton
 //moveInches(12, 30);
 //balance(7.5);
 ArmB.spinFor(1, rotationUnits::rev, true);
