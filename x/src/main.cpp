@@ -69,36 +69,23 @@ void nitroboost() { // Switchable mode
   Controller1.Screen.clearScreen();
   Controller1.Screen.setCursor(0, 0);
   if (maxSpeedPct == 1) {
-    maxSpeedPct = 0.8;
+    maxSpeedPct = 0.5;
     Controller1.rumble("..");
-    Controller1.Screen.print("NORMAL SPEED");
+    Controller1.Screen.print("SLOW");
   } else {
     maxSpeedPct = 1;
     Controller1.rumble("...");
     Controller1.Screen.print("MAX SPEED");
   }
+
 }
 
-void snailmode() {
-  Controller1.Screen.clearScreen();
-  Controller1.Screen.setCursor(0, 0);
-  if (maxSpeedPct == 0.5) {
-    maxSpeedPct = 0.8;
-    Controller1.rumble("..");
-    Controller1.Screen.print("NORMAL");
-  } else {
-    maxSpeedPct = 0.5;
-    Controller1.rumble(".");
-    Controller1.Screen.print("SLOW");
-  }
-}
+
 
 void usercontrol(void) {
-  Controller1.ButtonB.pressed(nitroboost); //assigning all switchable modes
-  Controller1.ButtonLeft.pressed(snailmode);
+  Controller1.ButtonA.pressed(nitroboost); //assigning all switchable modes
   // User control code here, inside the loop
   while (1) {
-
     left1.spin(vex::directionType::fwd, Controller1.Axis3.position() * maxSpeedPct,
                vex::velocityUnits::pct);
     left2.spin(vex::directionType::rev, Controller1.Axis3.position() * maxSpeedPct,
