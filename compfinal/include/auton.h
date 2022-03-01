@@ -25,8 +25,22 @@ void driveStop(bool holding){
     MotorLF.stop();
     MotorRF.stop();
   }
-
 }
+
+void setDriveVelocity(float velocity) {
+  MotorLF.setVelocity(velocity, velocityUnits::pct);
+  MotorLB.setVelocity(velocity, velocityUnits::pct);
+  MotorRB.setVelocity(velocity, velocityUnits::pct);
+  MotorRF.setVelocity(velocity, velocityUnits::pct);
+}
+void driveCorrection(float velocity, int dir){
+  setDriveVelocity(velocity);
+  MotorRF.spinTo(-0.1, rotationUnits::rev, false);
+  MotorRB.spinTo(-0.1, rotationUnits::rev, false);
+  MotorLF.spinTo(0.1, rotationUnits::rev, false);
+  MotorLB.spinTo(0.1, rotationUnits::rev, true);
+}
+
 double clip(double number, double min, double max) {
   if (number < min) {
     number = min;
@@ -36,70 +50,78 @@ double clip(double number, double min, double max) {
   return number;
 }
 
-void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) {
-  float gyroSensorCurrentValue;
-  float gyroError;
-  float gyroDrive;
-  float lastgyroError;
-  float gyroP;
-  float gyroD;
-
-  const float gyro_Kp = 0.673;
+void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) { //no params for PID consts
+  float gyroSensorCurrentValue; //current sensor value for IMU
+  float dir;
+  float gyroError; //error
+  float gyroDrive; //output var
+  float lastgyroError; //las error
+  float gyroP; //P var
+  float gyroD; //D var
+  //consts
+  const float gyro_Kp = 0.573;
   const float gyro_Ki = 0.4;
-  const float gyro_Kd = 0.28;
+  const float gyro_Kd = 0.18;
 
   int TimeExit = 0;
-  double Threshold = 1.5;
+  double Threshold = 1.5; //threshold in degs for turning
   while (1) {
-    gyroSensorCurrentValue = imu.rotation(vex::rotationUnits::deg);
-    Brain.Screen.setCursor(3, 1);
+    gyroSensorCurrentValue = imu.rotation(vex::rotationUnits::deg); //assign IMU val to var
+    gyroError = gyroRequestedValue - gyroSensorCurrentValue; //set gyro error
 
-    gyroError = gyroRequestedValue - gyroSensorCurrentValue;
-
-    if (gyroError < Threshold and gyroError > -Threshold) {
+    if (gyroError < Threshold and gyroError > -Threshold) { //if the gyro reports requested value, break 
       break;
     } else if (TimeExit == 10000) {
-      Brain.Screen.clearScreen();
       driveStop(true);
       break;
     } else {
       TimeExit = 0;
     }
 
-    gyroP = (gyro_Kp * gyroError);
-    static float gyroI = 0;
+    gyroP = (gyro_Kp * gyroError); //calculate P
+    static float gyroI = 0; //set I
     gyroI += gyroError * gyro_Ki;
-    if (gyroI > 1) {
+    if (gyroI > 1) { //clip if value is out of bounds
       gyroI = 1;
     }
     if (gyroI < -1) {
       gyroI = -1;
     }
-    gyroD = (gyroError - lastgyroError) * gyro_Kd;
-    gyroDrive = gyroP + gyroI + gyroD;
+    gyroD = (gyroError - lastgyroError) * gyro_Kd; //update D value 
+    gyroDrive = gyroP + gyroI + gyroD; //set output var to P+I+D
 
-    if (gyroDrive > MaxspeedinRPM) {
+    if (gyroDrive > MaxspeedinRPM) { //if requested value is (-) then turn CC, else, turn C (+)
       gyroDrive = MaxspeedinRPM;
     }
     if (gyroDrive < -MaxspeedinRPM) {
       gyroDrive = -MaxspeedinRPM;
     }
-
-    // Move Motors with PID
     int powerValue = gyroDrive;
-    MotorRF.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm);
-    MotorLF.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
+    bool breakSwitch = true;
+
+    if(breakSwitch){
+      if(powerValue > 0){
+        dir = 1;
+      }
+      else if(powerValue < 0){
+        dir = -1;
+      }
+      breakSwitch = false;
+    }
+
+    MotorRF.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm); //spin motors to output var
+    MotorLF.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm); //always equal to or lower than max speed specified
     MotorRB.spin(vex::directionType::rev, (powerValue), vex::velocityUnits::rpm);
     MotorLB.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
-
-    lastgyroError = gyroError;
-    wait(10, vex::timeUnits::msec);
+    lastgyroError = gyroError; //set the last error for loop iteration
+    wait(10, vex::timeUnits::msec); //wait for no wasted resources
   }
-  
+  driveStop(false); //stop the drive
+  driveCorrection(20, dir);
   driveStop(true);
 }
 
-void driveOnPID(double distance, double MaxspeedinRPM) { 
+void driveOnPID(double distance, double MaxspeedinRPM, float kP, float kI, float kD) { 
   MotorRB.resetRotation();
   float degs = (distance / (4 * M_PI)) * 360;
   float encoderValue;
@@ -109,17 +131,15 @@ void driveOnPID(double distance, double MaxspeedinRPM) {
   float P;
   float D;
 
-  const float Kp = 0.35;
-  const float Ki = 0.4;
-  const float Kd = 0.18;
+  const float Kp = kP;
+  const float Ki = kI;
+  const float Kd = kD;
 
   int TimeExit = 0;
-  double Threshold = 1.5;
+  double Threshold = 2.5;
   while (1) {
     encoderValue = MotorRB.rotation(vex::rotationUnits::deg);
-    
     Brain.Screen.setCursor(3, 1);
-
     error = degs - encoderValue;
 
     if (error < Threshold and error > -Threshold) {
@@ -150,18 +170,14 @@ void driveOnPID(double distance, double MaxspeedinRPM) {
     if (Drive < -MaxspeedinRPM) {
       Drive = -MaxspeedinRPM;
     }
-
-    // Move Motors with PID
     int powerValue = Drive;
     MotorRF.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
     MotorLF.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
     MotorRB.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
     MotorLB.spin(vex::directionType::fwd, (powerValue), vex::velocityUnits::rpm);
-
     lastError = error;
     wait(10, vex::timeUnits::msec);
   }
-  
   driveStop(true);
 }
 #endif

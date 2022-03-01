@@ -12,6 +12,17 @@
 #include <vex_competition.h>
 
 using namespace vex;
+void driveCorrecting(int veloc, int dir){
+  MotorLB.setVelocity(10, velocityUnits::pct);
+  MotorLF.setVelocity(10, velocityUnits::pct);
+  MotorRB.setVelocity(10, velocityUnits::pct);
+  MotorRF.setVelocity(10, velocityUnits::pct);
+
+  MotorLB.spinFor(0.1 * dir, rotationUnits::rev, false);
+  MotorLF.spinFor(0.1 * dir, rotationUnits::rev, false);
+  MotorRB.spinFor(-0.1 * dir, rotationUnits::rev, false);
+  MotorRF.spinFor(-0.1 * dir, rotationUnits::rev, true);
+}
 void driveStop(bool holding){
   if(holding){
     MotorRB.stop(hold);
@@ -33,12 +44,14 @@ void setDriveVelocity(float velocity) {
   MotorRB.setVelocity(velocity, velocityUnits::pct);
   MotorRF.setVelocity(velocity, velocityUnits::pct);
 }
+
 void driveCorrection(float velocity, int dir){
-  setDriveVelocity(velocity);
-  MotorRF.spinTo(-0.1, rotationUnits::rev, false);
-  MotorRB.spinTo(-0.1, rotationUnits::rev, false);
-  MotorLF.spinTo(0.1, rotationUnits::rev, false);
-  MotorLB.spinTo(0.1, rotationUnits::rev, true);
+  //setDriveVelocity(velocity);
+  MotorRF.spinTo(35 * dir, rotationUnits::deg, -velocity, velocityUnits::pct, false);
+  MotorLF.spinTo(35 * dir, rotationUnits::deg, -velocity, velocityUnits::pct, false);
+  MotorRB.spinTo(35 * dir, rotationUnits::deg, velocity, velocityUnits::pct, false);
+  MotorLB.spinTo(35 * dir, rotationUnits::deg, velocity, velocityUnits::pct, true);
+  driveStop(true);
 }
 
 double clip(double number, double min, double max) {
@@ -101,10 +114,10 @@ void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) { //no params fo
 
     if(breakSwitch){
       if(powerValue > 0){
-        dir = 1;
+        dir = -1;
       }
       else if(powerValue < 0){
-        dir = -1;
+        dir = 1;
       }
       breakSwitch = false;
     }
@@ -116,9 +129,8 @@ void turnOnPID(double gyroRequestedValue, double MaxspeedinRPM) { //no params fo
     lastgyroError = gyroError; //set the last error for loop iteration
     wait(10, vex::timeUnits::msec); //wait for no wasted resources
   }
-  driveStop(false); //stop the drive
-  driveCorrection(20, dir);\
-  driveStop(true);
+  driveStop(true); //stop the drive
+  driveCorrecting(10, dir);
 }
 
 void driveOnPID(double distance, double MaxspeedinRPM) { 
@@ -136,7 +148,7 @@ void driveOnPID(double distance, double MaxspeedinRPM) {
   const float Kd = 0.18;
 
   int TimeExit = 0;
-  double Threshold = 1.5;
+  double Threshold = 5;
   while (1) {
     encoderValue = MotorRB.rotation(vex::rotationUnits::deg);
     Brain.Screen.setCursor(3, 1);

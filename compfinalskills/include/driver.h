@@ -14,7 +14,7 @@
 using namespace vex;
 
 
-float maxSpeedPct = 0.8;
+float maxSpeedPct = 1;
 bool toggle = false;
 void nitroboost() { // Switchable mode
   Controller1.Screen.clearScreen();

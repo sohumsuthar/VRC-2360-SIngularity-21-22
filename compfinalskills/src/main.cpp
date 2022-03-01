@@ -76,10 +76,9 @@ while(imu.isCalibrating()){ //wait for IMU to calibrate before runnin auton
 //DO NOT ADJUST
 
 const float Kp = 0.12;
-const float Ki = 0.4;
+const float Ki = 0;
 const float Kd = 0.28;
-//moveInches(12, 30);
-//balance(7.5);
+
 ArmB.spinFor(1, rotationUnits::rev, true);
 move(-1.7, 30);
 ArmB.spinFor(-1, rotationUnits::rev, true);
@@ -102,7 +101,7 @@ MotorLF.spinTo(-0.1, rotationUnits::rev, false);
 MotorLB.spinTo(-0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
-move(3.25, 30);
+move(3.75, 30);
 
 turnOnPID(90, 100);
 /*
@@ -112,7 +111,7 @@ MotorLF.spinTo(0.1, rotationUnits::rev, false);
 MotorLB.spinTo(0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
-move(3.25, 30);
+move(3, 30);
 turnOnPID(0, 100);
 /*
 MotorRF.spinTo(-0.1, rotationUnits::rev, false);
@@ -121,7 +120,7 @@ MotorLF.spinTo(0.1, rotationUnits::rev, false);
 MotorLB.spinTo(0.1, rotationUnits::rev, true);
 */
 vexDelay(100);
-move(1.7, 30);
+move(2.75, 30);
 turnOnPID(90, 100);
 /*
 MotorRF.spinTo(0.1, rotationUnits::rev, false);
@@ -190,8 +189,8 @@ moveInches(100, 40);
 }
 
 void usercontrol(void) {
-  Controller1.ButtonL1.pressed(nitroboost); //assigning all switchable modes
-  Controller1.ButtonL2.pressed(snailmode);
+  Controller1.ButtonY.pressed(nitroboost); //assigning all switchable modes
+  Controller1.ButtonRight.pressed(snailmode);
   //Controller1.ButtonLeft.pressed(toggleonoff);
   timer Timer = timer(); //start timer for reminding the driver of time
   Timer.reset();
@@ -210,19 +209,19 @@ void usercontrol(void) {
   }
   while (1) { //drivercontrol functions
     if (Controller1.ButtonR1.pressing()) {
-      ArmL.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
-      ArmR.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
+      ArmL.spin(directionType::fwd, 100, velocityUnits::pct);
+      ArmR.spin(directionType::fwd, 100, velocityUnits::pct);
     } else if (Controller1.ButtonR2.pressing()) {
-      ArmL.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-      ArmR.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonY.pressing()) {
-      Claw.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonB.pressing()) {
+      ArmL.spin(directionType::rev, 100, velocityUnits::pct);
+      ArmR.spin(directionType::rev, 100 , velocityUnits::pct);
+    } else if (Controller1.ButtonL2.pressing()) {
+      Claw.spin(directionType::rev, 100, velocityUnits::pct);
+    } else if (Controller1.ButtonL1.pressing()) {
       Claw.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
-    } else if (Controller1.ButtonDown.pressing()) {
+    } else if (Controller1.ButtonX.pressing()) {
       ArmB.spin(directionType::rev, 100 * maxSpeedPct, velocityUnits::pct);
       //accel -= 0.1;
-    } else if (Controller1.ButtonRight.pressing()) {
+    } else if (Controller1.ButtonB.pressing()) {
       ArmB.spin(directionType::fwd, 100 * maxSpeedPct, velocityUnits::pct);
     } else {
       ArmL.stop(hold);
